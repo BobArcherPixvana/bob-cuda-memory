@@ -1,0 +1,20 @@
+.DS_Store
+
+# Visual Studio
+*.opensdf
+*.sdf
+*.suo
+*.user
+*.ilk
+*.pdb
+*.idb
+*.lastbuildstate
+*.tlog
+*.log
+
+*.cache
+*.obj
+*.deps
+
+log.txt
+
