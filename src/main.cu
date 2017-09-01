@@ -2,6 +2,7 @@
 #include "cuda_runtime.h"
 #include "nvrtc.h"
 
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
@@ -20,6 +21,7 @@ const char* logFile("log.txt");
     {                                                                                              \
         std::ofstream ostr(logFile, std::ios::app);                                                \
         ostr << exp;                                                                               \
+        std::cout << exp;                                                                          \
     } while(false)
 
 #define INSPECT(exp) LOG(#exp << ": " << (exp) << "\n")
@@ -68,22 +70,35 @@ void writeResult(cudaError_t result, std::string const& description)
 
 __global__ void identity(size_t n, unsigned char* src, unsigned char* dest)
 {
+    printf("a");
+    int index = threadIdx.x;
+    int stride = blockDim.x;
+    for(int i = index; i < n; i += stride)
+    {
+        dest[i] = src[i];
+    }
+
+    /*
     for(size_t i = 0; i < n; i++)
     {
         dest[i] = src[i];
     }
+    */
 }
 
 int main(int argc, char* argv[])
 {
     std::cout << "Bob's cuda testbed\n\n";
 
+    std::chrono::high_resolution_clock::time_point startTime(
+        std::chrono::high_resolution_clock::now());
+
     try
     {
         std::ofstream ostr(logFile, std::ios::trunc);
         ostr.close();
 
-        size_t nBytes(1000);
+        size_t nBytes(1000000000);
 
         if(argc > 1)
         {
@@ -113,8 +128,8 @@ int main(int argc, char* argv[])
             dest[i] = 0;
         }
 
-        int const numThreadsPerThreadBlock(1);
         int const numBlocks(1);
+        int const numThreadsPerThreadBlock(256);
 
         LOG("Start call kernel\n");
         identity<<<numBlocks, numThreadsPerThreadBlock>>>(nBytes, src, dest);
@@ -133,11 +148,18 @@ int main(int argc, char* argv[])
                 std::cout << "Match failed at byte # " << i << "\n";
             }
         }
+
+        std::cout << "Finished checking result\n";
     }
     catch(...)
     {
         std::cout << "Caught exception\n";
     }
+
+    std::cout << std::fixed << std::setprecision(9);
+    std::cout << std::chrono::duration_cast<std::chrono::duration<double>>(
+                     std::chrono::high_resolution_clock::now() - startTime)
+                     .count();
 
     return 0;
 }
