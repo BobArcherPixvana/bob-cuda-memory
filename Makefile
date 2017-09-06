@@ -2,16 +2,7 @@
 CUDA_PATH ?= "/usr/local/cuda-8.0"
 
 SOURCES := \
-	src/add.cu \
-	src/CudaUtils.cpp \
-	src/Identity2d.cpp \
-	src/Identity.cpp \
-	src/ImageProcessing.cpp \
-	src/main.cpp \
-	src/base/FormatUtils.cpp \
-	core/ColorRGB.cpp \
-	core/Image.cpp \
-	core/PPMUtils.cpp
+	src/main.cu
 
 INCPATH := \
 	-I. \

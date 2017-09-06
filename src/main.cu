@@ -2,6 +2,7 @@
 #include "cuda_runtime.h"
 #include "nvrtc.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
@@ -98,7 +99,7 @@ int main(int argc, char* argv[])
         std::ofstream ostr(logFile, std::ios::trunc);
         ostr.close();
 
-        size_t nBytes(1000000000);
+        size_t nBytes(2000000000);
 
         if(argc > 1)
         {
@@ -160,6 +161,7 @@ int main(int argc, char* argv[])
     std::cout << std::chrono::duration_cast<std::chrono::duration<double>>(
                      std::chrono::high_resolution_clock::now() - startTime)
                      .count();
+    std::cout << "\n";
 
     return 0;
 }
